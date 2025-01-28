@@ -13,7 +13,7 @@ export const books: Book[] = [
   {
     id: 1,
     title: "Hide and Seeek",
-    author: "Karan Kaul",
+    author: "Arun Kumar",
     description: "How does your night go from a game of Hide and Seek....",
     coverUrl: "https://res.cloudinary.com/dw5ow19cc/image/upload/v1735221945/special/h3gqwn6zyxrrwi2lfioc.png",
     price: "₹499",
@@ -23,7 +23,7 @@ export const books: Book[] = [
   {
     id: 2,
     title: "Hide and Seek 2",
-    author: "Karan Kaul",
+    author: "Arun Kumar",
     description: "Two years ago I lost everything. I thought I could start a new life...",
     coverUrl: "https://res.cloudinary.com/dw5ow19cc/image/upload/v1735221945/special/kuz3qvfr8vznozmksble.png",
     price: "₹599",
@@ -34,7 +34,7 @@ export const books: Book[] = [
   {
     id: 3,
     title: "Hide and Seek 3",
-    author: "Karan Kaul",
+    author: "Arun Kumar",
     description: "Tori and her friends use an ouija board...",
     coverUrl: "https://res.cloudinary.com/dw5ow19cc/image/upload/v1735221945/special/pgty37tsudgxjv9lnrbw.png",
     price: "₹699",
