@@ -26,7 +26,7 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
   // Handle payment through Razorpay
   const handlePayment = async () => {
     const options = {
-      key: 'rzp_live_k2ACXia3TFmEKC', // Your Razorpay key
+      key: 'rzp_live_RGw7xtb4d9jPJ0', // Your Razorpay key
       amount: parseFloat(book.price.replace('₹', '')) * 100, // Razorpay expects the amount in paise (1 INR = 100 paise)
       currency: 'INR',
       name: book.title,
