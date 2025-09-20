@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import emailjs from 'emailjs-com';
 
 interface PaymentModalProps {
   book: {
@@ -19,29 +20,25 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
 
   if (!book) return null;
 
+  // Initialize EmailJS with your public key
+  emailjs.init('0qK0_znp9dTfdruuL'); // Replace with your actual public key
+
   // Handle payment through Razorpay
   const handlePayment = async () => {
-    const amountInPaise = parseFloat(book.price.replace('₹', '').replace(',', '')) * 100; // Convert to paise (INR in 100 units)
-    console.log('Payment Amount (in paise):', amountInPaise);
-
     const options = {
       key: 'rzp_live_RGw7xtb4d9jPJ0', // Your Razorpay key
-      amount: amountInPaise, // Razorpay expects the amount in paise (1 INR = 100 paise)
+      amount: parseFloat(book.price.replace('₹', '')) * 100, // Razorpay expects the amount in paise (1 INR = 100 paise)
       currency: 'INR',
       name: book.title,
       description: 'Payment for ' + book.title,
       image: 'https://yourwebsite.com/logo.png', // Optional: Add your logo
       handler: function (response: any) {
-        console.log('Razorpay Payment Response:', response);
+        console.log('Payment successful:', response);
 
-        if (response && response.razorpay_payment_id) {
-          console.log('Payment successful:', response);
-          alert('Payment Successful!');
-          onClose(); // Close the modal after successful payment
-        } else {
-          console.error('Payment failed, no payment ID received:', response);
-          alert('Payment failed. Please try again.');
-        }
+
+       
+        // Call EmailJS to send the PDF link after successful payment
+        sendEmail(formData.email, book.pdfLink);
       },
       prefill: {
         name: formData.name,
@@ -57,16 +54,38 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
     };
 
     const razorpay = new window.Razorpay(options);
-    razorpay.on('payment.failed', function (response: any) {
-      console.error('Payment Failed:', response);
-      alert('Payment Failed. Error: ' + response.error.description);
-    });
     razorpay.open();
+  };
+
+  // Send Email using EmailJS
+  const sendEmail = (userEmail: string, pdfLink: string) => {
+    const templateParams = {
+      user_email: userEmail,
+      book_title: book.title,
+      book_link: book.pdfLink,
+    };
+
+   
+
+
+    emailjs.send(
+      'service_ovp0q3n', // Replace with your EmailJS service ID
+      'template_vpo4wnh', // Replace with your EmailJS template ID
+      templateParams
+    )
+    .then((response) => {
+      console.log('Email sent successfully:', response);
+      alert('Payment Successful! Check your email for the book link.');
+      onClose(); // Close the modal after payment
+    })
+    .catch((error) => {
+      console.error('Email sending failed:', error);
+      alert('Payment successful, but failed to send the email. Please try again later.');
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitting payment form with data:', formData);
     handlePayment();
   };
 
@@ -136,4 +155,4 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
   );
 };
 
-export default PaymentModal;
+export default PaymentModal; 
