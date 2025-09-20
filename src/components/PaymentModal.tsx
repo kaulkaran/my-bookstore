@@ -21,17 +21,27 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
 
   // Handle payment through Razorpay
   const handlePayment = async () => {
+    const amountInPaise = parseFloat(book.price.replace('₹', '').replace(',', '')) * 100; // Convert to paise (INR in 100 units)
+    console.log('Payment Amount (in paise):', amountInPaise);
+
     const options = {
       key: 'rzp_live_RGw7xtb4d9jPJ0', // Your Razorpay key
-      amount: parseFloat(book.price.replace('₹', '')) * 100, // Razorpay expects the amount in paise (1 INR = 100 paise)
+      amount: amountInPaise, // Razorpay expects the amount in paise (1 INR = 100 paise)
       currency: 'INR',
       name: book.title,
       description: 'Payment for ' + book.title,
       image: 'https://yourwebsite.com/logo.png', // Optional: Add your logo
       handler: function (response: any) {
-        console.log('Payment successful:', response);
-        alert('Payment Successful!'); // Show success message
-        onClose(); // Close the modal after payment
+        console.log('Razorpay Payment Response:', response);
+
+        if (response && response.razorpay_payment_id) {
+          console.log('Payment successful:', response);
+          alert('Payment Successful!');
+          onClose(); // Close the modal after successful payment
+        } else {
+          console.error('Payment failed, no payment ID received:', response);
+          alert('Payment failed. Please try again.');
+        }
       },
       prefill: {
         name: formData.name,
@@ -47,11 +57,16 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
     };
 
     const razorpay = new window.Razorpay(options);
+    razorpay.on('payment.failed', function (response: any) {
+      console.error('Payment Failed:', response);
+      alert('Payment Failed. Error: ' + response.error.description);
+    });
     razorpay.open();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting payment form with data:', formData);
     handlePayment();
   };
 
