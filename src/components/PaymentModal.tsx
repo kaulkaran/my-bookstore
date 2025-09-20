@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import emailjs from 'emailjs-com';
 
 interface PaymentModalProps {
   book: {
@@ -20,9 +19,6 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
 
   if (!book) return null;
 
-  // Initialize EmailJS with your public key
-  emailjs.init('0qK0_znp9dTfdruuL'); // Replace with your actual public key
-
   // Handle payment through Razorpay
   const handlePayment = async () => {
     const options = {
@@ -34,11 +30,8 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
       image: 'https://yourwebsite.com/logo.png', // Optional: Add your logo
       handler: function (response: any) {
         console.log('Payment successful:', response);
-
-
-       
-        // Call EmailJS to send the PDF link after successful payment
-        sendEmail(formData.email, book.pdfLink);
+        alert('Payment Successful!'); // Show success message
+        onClose(); // Close the modal after payment
       },
       prefill: {
         name: formData.name,
@@ -55,33 +48,6 @@ const PaymentModal = ({ book, onClose }: PaymentModalProps) => {
 
     const razorpay = new window.Razorpay(options);
     razorpay.open();
-  };
-
-  // Send Email using EmailJS
-  const sendEmail = (userEmail: string, pdfLink: string) => {
-    const templateParams = {
-      user_email: userEmail,
-      book_title: book.title,
-      book_link: book.pdfLink,
-    };
-
-   
-
-
-    emailjs.send(
-      'service_ovp0q3n', // Replace with your EmailJS service ID
-      'template_vpo4wnh', // Replace with your EmailJS template ID
-      templateParams
-    )
-    .then((response) => {
-      console.log('Email sent successfully:', response);
-      alert('Payment Successful! Check your email for the book link.');
-      onClose(); // Close the modal after payment
-    })
-    .catch((error) => {
-      console.error('Email sending failed:', error);
-      alert('Payment successful, but failed to send the email. Please try again later.');
-    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
